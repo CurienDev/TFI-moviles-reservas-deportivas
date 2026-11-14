@@ -14,7 +14,6 @@ import { useCarga } from '../../utilidades/useCarga';
 
 const MOTIVOS_RAPIDOS = ['Lluvia: cancha impracticable', 'Mantenimiento', 'Corte de luz', 'Evento municipal'];
 
-/** Bloquear turnos o días enteros por mantenimiento o lluvia, con motivo escrito. */
 function Contenido() {
   const { colores } = useTema();
   const { estado: catalogo, espacio } = useCatalogo();

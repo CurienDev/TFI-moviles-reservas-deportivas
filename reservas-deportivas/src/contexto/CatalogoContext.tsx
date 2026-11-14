@@ -3,8 +3,6 @@ import type { Deporte, Espacio, EstadoCarga } from '../tipos';
 import { listarDeportes, listarEspacios } from '../servicios/espacios';
 import { guardarMediosSinConexion } from '../servicios/medios';
 
-/** Catálogo de deportes y espacios compartido por las pantallas (se carga una vez). */
-
 interface Catalogo {
   deportes: Deporte[];
   espacios: Espacio[];
@@ -23,7 +21,6 @@ const Contexto = createContext<ValorCatalogo | null>(null);
 async function obtenerCatalogo(): Promise<EstadoCarga<Catalogo>> {
   const [dep, esp] = await Promise.all([listarDeportes(), listarEspacios()]);
   if (dep.ok && esp.ok) {
-    // Con conexión, se guardan las fotos en el teléfono para verlas después sin datos.
     if (!esp.desdeCache) void guardarMediosSinConexion(esp.datos).catch(() => undefined);
     return { tipo: 'exito', datos: { deportes: dep.datos, espacios: esp.datos }, desdeCache: dep.desdeCache || esp.desdeCache };
   }
@@ -33,7 +30,6 @@ async function obtenerCatalogo(): Promise<EstadoCarga<Catalogo>> {
 export function ProveedorCatalogo({ children }: { children: ReactNode }) {
   const [estado, setEstado] = useState<EstadoCarga<Catalogo>>({ tipo: 'cargando' });
 
-  // Si una actualización falla se conservan los datos que ya había.
   const aplicar = useCallback((nuevo: EstadoCarga<Catalogo>) => {
     setEstado((e) => (nuevo.tipo === 'error' && e.tipo === 'exito' ? e : nuevo));
   }, []);

@@ -1,11 +1,6 @@
 import { Linking, Platform } from 'react-native';
 import type { Coordenadas } from '../tipos';
 
-/**
- * "Cómo llegar": abre la app de mapas que tenga instalada la persona (Android elige
- * con el esquema geo:). Si no hay ninguna, abre la ruta en OpenStreetMap en el
- * navegador. No depende de Google Maps ni de claves pagas.
- */
 export async function abrirComoLlegar(destino: Coordenadas, nombre: string): Promise<void> {
   const { latitud: lat, longitud: lon } = destino;
   const etiqueta = encodeURIComponent(nombre);
@@ -27,6 +22,6 @@ export async function llamar(telefono: string): Promise<void> {
   try {
     await Linking.openURL(`tel:${limpio}`);
   } catch {
-    // Sin app de teléfono (por ejemplo, en algunos emuladores): no se hace nada.
+    // Sin app de teléfono (algunos emuladores).
   }
 }

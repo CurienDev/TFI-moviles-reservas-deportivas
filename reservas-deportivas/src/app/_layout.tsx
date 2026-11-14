@@ -13,7 +13,6 @@ import { configurarNotificaciones } from '../notificaciones/notificaciones';
 
 configurarNotificaciones();
 
-/** Reingreso: con sesión guardada se pide huella (o contraseña) antes de mostrar la app. */
 function Reingreso() {
   const { colores } = useTema();
   const { desbloquear, cerrarSesion } = useSesion();
@@ -33,7 +32,6 @@ function Navegacion() {
   const { colores } = useTema();
   const { bloqueada, cargando } = useSesion();
 
-  // Al tocar una notificación se abre la reserva o la bandeja de avisos.
   useEffect(() => {
     const abrir = (r: Notifications.NotificationResponse | null) => {
       const datos = r?.notification.request.content.data as { tipo?: string; reservaId?: string | null } | undefined;

@@ -16,7 +16,6 @@ import { abrirComoLlegar } from '../../utilidades/navegacion';
 import { useCarga } from '../../utilidades/useCarga';
 import { complejoDe, unir } from '../../logica/complejos';
 
-/** Mi reserva: datos, QR de ingreso (visible sin conexión), cómo llegar y cancelar. */
 function Contenido() {
   const { id, nueva } = useLocalSearchParams<{ id: string; nueva?: string }>();
   const { colores } = useTema();

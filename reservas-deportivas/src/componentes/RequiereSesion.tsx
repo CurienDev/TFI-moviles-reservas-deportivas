@@ -5,7 +5,6 @@ import { useSesion } from '../contexto/SesionContext';
 import { espaciado } from '../tema/colores';
 import { Boton, Cargando, Vacio } from './base';
 
-/** Muestra el contenido solo con sesión; si no, invita a ingresar (mirar no requiere cuenta). */
 export function RequiereSesion({ children, mensaje, staff }: { children: ReactNode; mensaje: string; staff?: boolean }) {
   const { usuario, cargando, esStaff } = useSesion();
   if (cargando) return <Cargando />;

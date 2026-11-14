@@ -12,10 +12,6 @@ import { agregarFotoDeCancha, borrarFotoDeCancha, fotosDeCancha } from '../../se
 import type { FotoCancha } from '../../tipos';
 import { espaciado, radio } from '../../tema/colores';
 
-/**
- * Fotos del estado de una cancha (expo-image-picker). Se guardan en el teléfono con
- * expo-file-system y se suben a la API (POST /archivos). Aparecen en la ficha del espacio.
- */
 function Contenido() {
   const { colores } = useTema();
   const { estado } = useCatalogo();

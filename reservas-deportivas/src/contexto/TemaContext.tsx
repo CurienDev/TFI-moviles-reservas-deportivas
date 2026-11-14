@@ -4,12 +4,6 @@ import { Platform, useColorScheme } from 'react-native';
 import { CLAVES, guardarJson, leerJsonSync } from '../almacenamiento/kv';
 import { claro, oscuro, type Paleta } from '../tema/colores';
 
-/**
- * Tema de la app. Además de claro/oscuro/sistema, en Android se puede elegir
- * "sensor de luz": con poca luz ambiente (de noche, a la intemperie) pasa solo
- * a modo oscuro. Usa expo-sensors (LightSensor).
- */
-
 export type PreferenciaTema = 'sistema' | 'claro' | 'oscuro' | 'sensor';
 
 interface ValorTema {
@@ -22,7 +16,6 @@ interface ValorTema {
 
 const Contexto = createContext<ValorTema | null>(null);
 
-// Histéresis para no parpadear en el límite.
 const LUX_OSCURECER = 15;
 const LUX_ACLARAR = 40;
 

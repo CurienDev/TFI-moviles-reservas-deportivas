@@ -14,7 +14,6 @@ import { llamar } from '../../utilidades/navegacion';
 import { useCarga } from '../../utilidades/useCarga';
 import { nombreComplejo } from '../../logica/complejos';
 
-/** Agenda del día de todos los espacios: reservas, fijas y bloqueos (GET /agenda). */
 function Contenido() {
   const { colores } = useTema();
   const dias = useMemo(() => proximosDias(new Date()), []);

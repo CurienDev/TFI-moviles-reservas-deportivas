@@ -16,7 +16,6 @@ import { espaciado } from '../../tema/colores';
 import { abrirComoLlegar } from '../../utilidades/navegacion';
 import { useCarga } from '../../utilidades/useCarga';
 
-/** Ficha del espacio: fotos, video, características, precio, reglas y ubicación. */
 export default function PantallaEspacio() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { colores } = useTema();
@@ -25,7 +24,6 @@ export default function PantallaEspacio() {
   const { estado, reintentar } = useCarga(() => obtenerEspacio(String(id)), [id]);
   const [fotos, setFotos] = useState<FotoCancha[]>([]);
 
-  // Fotos del estado de la cancha que subió el personal desde este teléfono.
   useEffect(() => {
     let vigente = true;
     void fotosDeCancha(String(id)).then((f) => {

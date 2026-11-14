@@ -5,14 +5,6 @@ ver qué hay libre sin cuenta, reservar en dos toques, recibir recordatorios, ca
 mostrando un QR que el encargado escanea en la puerta. Incluye la gestión municipal (agenda del día,
 ingresos y ausentes, bloqueos por lluvia, reservas fijas, precios, fotos de las canchas).
 
-## Guías para el grupo
-
-En la carpeta [`guias/`](guias/) (en Markdown y PDF):
-
-1. [Guía de estudio](guias/01-guia-de-estudio.md): cómo está armada la app y preguntas para la defensa.
-2. [Guía de instalación](guias/02-guia-de-instalacion.md): API en la PC, emulador, celular y compilación.
-3. [Checklist de pruebas](guias/03-checklist-de-pruebas.md): 53 pruebas para ir marcando mientras se usa la app.
-
 El APK no está en el repositorio (supera el límite de 100 MB de GitHub): se publica en **Releases**.
 
 **Stack:** React Native 0.86 · Expo SDK 57 · TypeScript · Expo Router · StyleSheet.
@@ -103,5 +95,4 @@ src/notificaciones/ recordatorios y avisos locales
 scripts/            probar-api.mjs (prueba de humo contra la API)
 __tests__/          pruebas Jest
 docs/               DECISIONES.md
-guias/              guías de estudio, instalación y pruebas (Markdown + PDF)
 ```

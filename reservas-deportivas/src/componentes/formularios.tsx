@@ -5,7 +5,6 @@ import { espaciado } from '../tema/colores';
 import { Chip, Texto } from './base';
 import { nombreComplejo, tieneComplejo } from '../logica/complejos';
 
-/** Fila de horas en punto entre `desde` y `hasta` (incluidas). */
 export function SelectorHora({ etiqueta, valor, onCambiar, desde = HORA_APERTURA, hasta = HORA_CIERRE }: {
   etiqueta: string; valor: string; onCambiar: (h: string) => void; desde?: number; hasta?: number;
 }) {
@@ -21,7 +20,6 @@ export function SelectorHora({ etiqueta, valor, onCambiar, desde = HORA_APERTURA
 }
 
 export function SelectorDiaSemana({ valor, onCambiar }: { valor: number; onCambiar: (d: 0 | 1 | 2 | 3 | 4 | 5 | 6) => void }) {
-  // De lunes a domingo, como se piensa la semana.
   const orden = [1, 2, 3, 4, 5, 6, 0] as const;
   return (
     <View style={estilos.envolver}>
@@ -30,7 +28,6 @@ export function SelectorDiaSemana({ valor, onCambiar }: { valor: number; onCambi
   );
 }
 
-/** Selección de uno o varios espacios agrupados por complejo. */
 export function SelectorEspacios({ espacios, seleccion, onCambiar, multiple }: {
   espacios: Espacio[]; seleccion: string[]; onCambiar: (ids: string[]) => void; multiple?: boolean;
 }) {

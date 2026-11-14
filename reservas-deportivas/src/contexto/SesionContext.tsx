@@ -13,16 +13,9 @@ import {
   cancelarTodosLosRecordatorios, entregarAvisos, pedirPermisoNotificaciones, sincronizarRecordatorios,
 } from '../notificaciones/notificaciones';
 
-/**
- * Sesión del usuario. Mirar la disponibilidad no requiere cuenta (PRD); la cuenta se pide
- * para reservar. La sesión sobrevive al cierre de la app (token en SecureStore) y al
- * volver a abrirla se pide la huella (o la contraseña) antes de mostrar los datos.
- */
-
 interface ValorSesion {
   cargando: boolean;
   usuario: Usuario | null;
-  /** Hay sesión guardada pero falta confirmar la identidad (huella o contraseña). */
   bloqueada: boolean;
   esStaff: boolean;
   esAdmin: boolean;
@@ -33,7 +26,6 @@ interface ValorSesion {
   registrarse: (d: { nombre: string; email: string; telefono: string; contrasena: string }) => Promise<Resultado<Sesion>>;
   cerrarSesion: () => Promise<void>;
   actualizarUsuario: (u: Usuario) => void;
-  /** Vuelve a pedir reservas, detecta avisos y reprograma los recordatorios. */
   sincronizar: (opciones?: { revisarFavoritos?: boolean }) => Promise<void>;
   recargarAvisos: () => Promise<void>;
 }
@@ -48,11 +40,10 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
   const [bloqueada, setBloqueada] = useState(false);
   const [avisos, setAvisos] = useState<Aviso[]>([]);
   const usuarioRef = useRef<Usuario | null>(null);
-  // Última revisión de las grillas de favoritos, por usuario (no es necesario hacerla cada minuto).
+  // Los favoritos se revisan cada 2 minutos, no en cada sincronización.
   const ultimaRevisionFavoritos = useRef<{ usuarioId: string; momento: number } | null>(null);
   const sincronizando = useRef(false);
 
-  // Este efecto va antes de los que sincronizan, así el ref ya tiene el usuario nuevo.
   useEffect(() => {
     usuarioRef.current = usuario;
   }, [usuario]);
@@ -67,7 +58,6 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
     if (!actual || sincronizando.current) return;
     sincronizando.current = true;
     try {
-      // Primero el usuario al día (favoritos recién marcados, contadores).
       const yo = await refrescarUsuario();
       const u = yo.ok && yo.datos.id === actual.id ? yo.datos : actual;
       if (yo.ok && usuarioRef.current?.id === yo.datos.id) setUsuario(yo.datos);
@@ -99,8 +89,7 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
       setUsuario(null);
       setAvisos([]);
     });
-    // Primero lo guardado en el teléfono (instantáneo): con sesión se bloquea ya mismo y se pide
-    // la huella. Después se valida con la API, que puede tardar o no estar disponible.
+    // Primero lo guardado en el teléfono y después se valida con la API.
     void (async () => {
       let local: Usuario | null = null;
       try {
@@ -135,7 +124,6 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
       clearInterval(id);
       sub.remove();
     };
-    // Solo al cambiar de usuario o al desbloquear (no en cada actualización del objeto).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usuario?.id, bloqueada, sincronizar]);
 

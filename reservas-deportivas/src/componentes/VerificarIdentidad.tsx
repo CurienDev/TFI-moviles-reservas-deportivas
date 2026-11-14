@@ -7,12 +7,6 @@ import { verificarContrasena } from '../servicios/usuarios';
 import { espaciado } from '../tema/colores';
 import { Boton, Campo, Icono, Texto, Vacio } from './base';
 
-/**
- * Confirma la identidad con huella o rostro (expo-local-authentication). Si el teléfono
- * no tiene biometría ni bloqueo de pantalla, o la persona prefiere no usarla, se confirma
- * con la contraseña de la cuenta (alternativa que pide el TFI).
- */
-
 type Paso = { tipo: 'verificando' } | { tipo: 'contrasena'; motivo: string };
 
 async function verificarBiometria(mensaje: string): Promise<Paso | null> {

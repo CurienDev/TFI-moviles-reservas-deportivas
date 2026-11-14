@@ -3,23 +3,10 @@ import { CLAVES, guardarJson, leerJson, leerJsonSync } from '../almacenamiento/k
 import { leerToken } from '../almacenamiento/seguro';
 import { ERROR_RED, SIN_SERVIDOR, interpretarRespuesta, normalizarUrl } from './protocolo';
 
-/**
- * Cliente de la API de la cátedra. Las pantallas nunca lo llaman directo: usan los
- * servicios de esta carpeta (espacios, reservas, usuarios...).
- *
- * La dirección del servidor sale de la variable EXPO_PUBLIC_API_URL (se fija al compilar,
- * ver eas.json) y se puede cambiar desde Perfil › Servidor.
- */
-
 type Metodo = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 export type Simulacion = 'ninguna' | 'error' | 'demora';
 
-/**
- * La API corre en la PC del grupo (local): responde en milisegundos. 30 s alcanzan aun con la
- * demora simulada y evitan esperar más de un minuto si la IP está mal escrita.
- */
 const TIEMPO_MAXIMO_MS = 30_000;
-// Si eas.json todavía tiene el texto de ejemplo, se trata como "sin configurar".
 const URL_FABRICA = process.env.EXPO_PUBLIC_API_URL ?? '';
 const URL_POR_DEFECTO = URL_FABRICA.includes('CAMBIAR-POR') ? '' : normalizarUrl(URL_FABRICA);
 
@@ -43,7 +30,6 @@ export function cambiarSimulacion(s: Simulacion): Promise<void> {
   return guardarJson(CLAVES.simulacion, s);
 }
 
-/** Se llama cuando la API responde NO_AUTENTICADO (token vencido o borrado). */
 let alPerderSesion: (() => void) | null = null;
 export function registrarPerdidaDeSesion(fn: () => void): void {
   alPerderSesion = fn;
@@ -52,7 +38,6 @@ export function registrarPerdidaDeSesion(fn: () => void): void {
 interface Opciones {
   cuerpo?: unknown;
   formulario?: FormData;
-  /** Para probar la conexión con otra dirección sin guardarla. */
   base?: string;
   sinSesion?: boolean;
 }
@@ -99,10 +84,7 @@ export async function solicitar<T>(metodo: Metodo, ruta: string, opciones: Opcio
   }
 }
 
-/**
- * Lectura con respaldo local: si la red falla, devuelve lo último guardado en el teléfono
- * (marcado desdeCache). Así la app abre y muestra algo sin conexión.
- */
+// Si falla la red, devuelve lo último guardado en el teléfono.
 export async function conRespaldo<T>(
   pedir: () => Promise<Resultado<T>>,
   guardar: (datos: T) => Promise<void>,

@@ -9,7 +9,6 @@ import type { Reserva } from '../src/tipos';
 
 const d = (s: string) => new Date(s); // hora local "AAAA-MM-DDTHH:MM"
 
-/** Reserva con la forma de la API (cancelableHasta = inicio − 4 h). */
 function reserva(fecha: string, inicio: string, extra: Partial<Reserva> = {}): Reserva {
   const limite = new Date(`${fecha}T${inicio}`);
   limite.setHours(limite.getHours() - 4);

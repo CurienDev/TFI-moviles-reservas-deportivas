@@ -6,15 +6,6 @@ import { CLAVES, guardarJson, leerJson, leerJsonSync } from '../almacenamiento/k
 import { aIsoConZona } from '../logica/fechas';
 import { solicitar } from './cliente';
 
-/**
- * Fotos y videos de los espacios, con la API nueva de expo-file-system (File, Directory,
- * Paths):
- * - las fotos (y el video, si la API lo trae) se descargan a Paths.document para verlas
- *   sin datos en la cancha;
- * - las fotos del estado de una cancha que saca el personal se achican, se guardan en el
- *   teléfono y se suben a la API con POST /archivos.
- */
-
 type MapaDescargas = Record<string, string>;
 
 function mapaSync(): MapaDescargas {
@@ -31,7 +22,6 @@ function copiaLocal(url: string): string | null {
   }
 }
 
-/** Fuente para expo-image / expo-video: la copia local si existe; si no, la URL. */
 export function fuenteMedio(url: string): { uri: string } {
   return { uri: copiaLocal(url) ?? url };
 }
@@ -54,7 +44,6 @@ function nombreArchivo(url: string): string {
   return `m${(h >>> 0).toString(16)}${ext.length <= 6 ? ext : ''}`;
 }
 
-/** Descarga a almacenamiento permanente las fotos (y el video) de los espacios indicados. */
 export async function guardarMediosSinConexion(espacios: Espacio[], incluirVideo = false): Promise<{ descargados: number; errores: number }> {
   const urls = espacios.flatMap((e) => [...e.imagenes, ...(incluirVideo && e.videoUrl ? [e.videoUrl] : [])]).filter((u) => u.startsWith('http'));
   const mapa = (await leerJson<MapaDescargas>(CLAVES.mediosDescargados)) ?? {};
@@ -78,7 +67,7 @@ export async function guardarMediosSinConexion(espacios: Espacio[], incluirVideo
   return { descargados, errores };
 }
 
-// ---- Fotos del estado de las canchas (personal) ----
+// Fotos del estado de las canchas
 
 export async function fotosDeCancha(espacioId: string): Promise<FotoCancha[]> {
   const todas = await db.listar<FotoCancha>('fotos');
@@ -87,18 +76,13 @@ export async function fotosDeCancha(espacioId: string): Promise<FotoCancha[]> {
     .sort((a, b) => b.creadaEn.localeCompare(a.creadaEn));
 }
 
-function subirFoto(uri: string): Promise<Resultado<ArchivoSubido>> {
+function subirFoto(archivo: File): Promise<Resultado<ArchivoSubido>> {
   const formulario = new FormData();
-  // React Native arma el multipart a partir de { uri, name, type }.
-  formulario.append('archivo', { uri, name: 'foto.jpg', type: 'image/jpeg' } as unknown as Blob);
+  // El fetch de Expo no acepta { uri, name, type }: hay que pasarle el File.
+  formulario.append('archivo', archivo as unknown as Blob);
   return solicitar<ArchivoSubido>('POST', '/archivos', { formulario });
 }
 
-/**
- * Guarda una foto elegida de la galería: la reduce (las fotos de 2 a 5 MB gastan datos y
- * tardan; la API acepta hasta 5 MB), la copia a Paths.document y la sube a la API.
- * Si no hay red queda guardada en el teléfono igual.
- */
 export async function agregarFotoDeCancha(espacioId: string, uriTemporal: string): Promise<{ foto: FotoCancha; subida: boolean; error: string | null }> {
   const contexto = ImageManipulator.manipulate(uriTemporal).resize({ width: 1280 });
   const imagen = await contexto.renderAsync();
@@ -111,7 +95,7 @@ export async function agregarFotoDeCancha(espacioId: string, uriTemporal: string
   } catch {
     // El temporal lo limpia el sistema si no se pudo borrar.
   }
-  const subida = await subirFoto(destino.uri);
+  const subida = await subirFoto(destino);
   const foto: FotoCancha = {
     id: `foto-${Date.now()}`,
     espacioId,

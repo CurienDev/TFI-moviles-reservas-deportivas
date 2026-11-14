@@ -12,8 +12,6 @@ import { espaciado, radio, type Paleta } from '../tema/colores';
 import { Boton, Etiqueta, Icono, Tarjeta, Texto } from './base';
 import { complejoDe, unir } from '../logica/complejos';
 
-// ---- Imagen de un espacio (con ícono de reemplazo si no carga) ----
-
 export function ImagenEspacio({ uri, alto = 160, icono = 'image-outline', redondeo = radio.m }: { uri: string | undefined; alto?: number; icono?: string; redondeo?: number }) {
   const { colores } = useTema();
   const [fallo, setFallo] = useState(false);
@@ -38,8 +36,6 @@ export function ImagenEspacio({ uri, alto = 160, icono = 'image-outline', redond
     />
   );
 }
-
-// ---- Tarjeta del listado ----
 
 export const TarjetaEspacio = memo(function TarjetaEspacio({
   espacio, deporte, distanciaKm, onPress, favorito,
@@ -74,8 +70,6 @@ export const TarjetaEspacio = memo(function TarjetaEspacio({
   );
 });
 
-// ---- Galería de fotos ----
-
 export function Galeria({ imagenes, icono }: { imagenes: string[]; icono?: string }) {
   const { width } = useWindowDimensions();
   const { colores } = useTema();
@@ -109,8 +103,6 @@ export function Galeria({ imagenes, icono }: { imagenes: string[]; icono?: strin
     </View>
   );
 }
-
-// ---- Video del recorrido (expo-video) ----
 
 function ReproductorVideo({ uri }: { uri: string }) {
   const player = useVideoPlayer(fuenteMedio(uri), (p) => {
@@ -177,8 +169,6 @@ export function VideoCancha({ espacio }: { espacio: Espacio }) {
   );
 }
 
-// ---- QR de ingreso ----
-
 export function QrReserva({ codigo, apagado }: { codigo: string; apagado?: boolean }) {
   const { width } = useWindowDimensions();
   const tam = Math.min(260, width - 120);
@@ -189,8 +179,6 @@ export function QrReserva({ codigo, apagado }: { codigo: string; apagado?: boole
     </View>
   );
 }
-
-// ---- Selector de día (hoy + 6) ----
 
 export function SelectorDia({ dias, valor, onCambiar, ahora }: { dias: string[]; valor: string; onCambiar: (d: string) => void; ahora: Date }) {
   const { colores } = useTema();
@@ -239,12 +227,9 @@ export function SelectorDia({ dias, valor, onCambiar, ahora }: { dias: string[];
   );
 }
 
-/** Días a partir de `desde` (para bloqueos y agenda, más allá de la semana). */
 export function rangoDias(desde: string, cantidad: number): string[] {
   return Array.from({ length: cantidad }, (_, i) => sumarDias(desde, i));
 }
-
-// ---- Fila de la grilla ----
 
 export function estiloEstado(turno: Turno, pasado: boolean, c: Paleta) {
   if (turno.estado === 'mantenimiento') return { texto: 'MANTENIMIENTO', icono: 'construct-outline', color: c.mantenimiento, fondo: c.mantenimientoFondo };

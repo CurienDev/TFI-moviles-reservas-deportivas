@@ -11,11 +11,6 @@ import { espaciado } from '../../tema/colores';
 import { llamar } from '../../utilidades/navegacion';
 import { useCarga } from '../../utilidades/useCarga';
 
-/**
- * Jugadores con reservas en los próximos siete días, con sus cancelaciones tardías y
- * ausencias. La API no tiene un listado de usuarios: se arma con GET /reservas?fecha= y
- * GET /usuarios/<id>. Es solo informativo (el PRD no pide sanciones todavía).
- */
 async function jugadoresDeLaSemana(): Promise<Resultado<Usuario[]>> {
   const ids = new Set<string>();
   for (const fecha of proximosDias(new Date())) {

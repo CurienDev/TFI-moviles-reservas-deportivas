@@ -7,7 +7,6 @@ import { useTema } from '../contexto/TemaContext';
 import { marcarFavorito } from '../servicios/espacios';
 import { Icono } from './base';
 
-/** Estrella de favorito: se avisa cuando se libera un turno de este espacio. */
 export function BotonFavorito({ espacioId }: { espacioId: string }) {
   const { colores } = useTema();
   const { usuario, actualizarUsuario, sincronizar } = useSesion();
@@ -28,7 +27,6 @@ export function BotonFavorito({ espacioId }: { espacioId: string }) {
     if (r.ok) {
       actualizarUsuario(r.datos);
       void Haptics.selectionAsync();
-      // Se toma enseguida la foto de la grilla del favorito, para avisar cuando se libere un turno.
       if (!activo) void sincronizar({ revisarFavoritos: true });
     } else {
       Alert.alert('No se pudo guardar', r.error.mensaje);

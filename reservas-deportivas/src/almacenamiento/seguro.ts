@@ -1,7 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
 
-/** Token de sesión en el almacenamiento cifrado del sistema (Keystore en Android). */
-
 const CLAVE_TOKEN = 'sesion_token';
 
 export async function leerToken(): Promise<string | null> {
@@ -24,10 +22,6 @@ export async function borrarToken(): Promise<void> {
   }
 }
 
-/**
- * Huella de la contraseña (SHA-256 iterado con sal, nunca la contraseña en claro) para poder
- * confirmar la identidad en el reingreso cuando no hay red ni biometría.
- */
 const CLAVE_CREDENCIAL = 'credencial_local';
 
 export interface CredencialLocal {
@@ -49,7 +43,7 @@ export async function guardarCredencialLocal(c: CredencialLocal): Promise<void> 
   try {
     await SecureStore.setItemAsync(CLAVE_CREDENCIAL, JSON.stringify(c));
   } catch {
-    // Sin huella guardada el reingreso sin red no estará disponible; no es grave.
+    // Sin esto solo se pierde el reingreso sin red.
   }
 }
 

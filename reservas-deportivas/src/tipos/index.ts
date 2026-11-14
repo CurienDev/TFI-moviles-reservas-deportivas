@@ -1,13 +1,4 @@
-/**
- * Tipos del dominio.
- *
- * 1. Tipos del PRD: copia literal de la sección "Resumen — qué entidades maneja la app"
- *    (idénticos a contract/types.ts de la API de la cátedra). No se modifican.
- * 2. Tipos que agrega la API (contract/api.ts): sobre de respuestas, Bloqueo, Sesion...
- * 3. Tipos propios de la app (no viajan por la API): avisos locales, estados de carga, etc.
- */
-
-// ===================== 1. Tipos del PRD =====================
+// Tipos del PRD (no modificar)
 
 export interface Coordenadas {
   latitud: number;
@@ -92,7 +83,7 @@ export interface Usuario {
   ausencias: number;
 }
 
-// ===================== 2. Tipos que agrega la API =====================
+// Tipos que agrega la API
 
 export interface Meta {
   total: number;
@@ -100,10 +91,8 @@ export interface Meta {
   porPagina: number;
 }
 
-/** Sobre de toda respuesta: { datos, meta } o { error: { codigo, mensaje } }. */
 export type RespuestaApi<T> = { datos: T; meta: Meta | null } | { error: ErrorApi };
 
-/** Bloqueo de un espacio. Sin inicio ni fin cubre el día entero. Sólo para el personal. */
 export interface Bloqueo {
   id: string;
   espacioId: string;
@@ -131,19 +120,13 @@ export interface Salud {
   version: string;
 }
 
-/**
- * Error de la API. `codigo` es estable (se usa para decidir qué hacer) y `mensaje` se
- * muestra tal cual. La app agrega sus propios códigos para fallas que no vienen del
- * servidor: ERROR_RED (sin conexión o sin respuesta) y SIN_SERVIDOR (falta la dirección).
- */
 export interface ErrorApi {
   codigo: string;
   mensaje: string;
 }
 
-// ===================== 3. Tipos propios de la app =====================
+// Tipos propios de la app
 
-/** Reserva con los datos del espacio y del horario, lista para mostrar. */
 export interface ReservaDetallada {
   reserva: Reserva;
   espacio: Espacio | null;
@@ -152,7 +135,6 @@ export interface ReservaDetallada {
   fin: string;
 }
 
-/** Fila de la agenda del encargado: un turno ocupado o bloqueado y quién lo tiene. */
 export interface FilaAgenda {
   turno: Turno;
   espacio: Espacio | null;
@@ -163,10 +145,6 @@ export interface FilaAgenda {
 
 export type TipoAviso = 'suspension' | 'turno_liberado';
 
-/**
- * Aviso guardado en el teléfono. La API avisa por push, pero esa parte del servidor no
- * está implementada; la app detecta los mismos hechos al sincronizar y los guarda acá.
- */
 export interface Aviso {
   id: string;
   usuarioId: string;
@@ -180,7 +158,6 @@ export interface Aviso {
   leido: boolean;
 }
 
-/** Foto del estado de una cancha tomada por el personal (guardada en el teléfono). */
 export interface FotoCancha {
   id: string;
   espacioId: string;
@@ -189,12 +166,10 @@ export interface FotoCancha {
   creadaEn: string;
 }
 
-/** Resultado que devuelven los servicios a las pantallas (unión discriminada). */
 export type Resultado<T> =
   | { ok: true; datos: T; meta: Meta | null; desdeCache: boolean }
   | { ok: false; error: ErrorApi };
 
-/** Estado de carga de una pantalla (unión discriminada). */
 export type EstadoCarga<T> =
   | { tipo: 'cargando' }
   | { tipo: 'exito'; datos: T; desdeCache: boolean }

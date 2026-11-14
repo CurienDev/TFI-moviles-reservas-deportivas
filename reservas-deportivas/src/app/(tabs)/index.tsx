@@ -11,7 +11,6 @@ import { lugarDe, nombreComplejo } from '../../logica/complejos';
 import { espaciado } from '../../tema/colores';
 import { useUbicacion } from '../../utilidades/useUbicacion';
 
-/** Listado de los once espacios con filtros por deporte y por complejo. No requiere cuenta. */
 export default function PantallaEspacios() {
   const { colores } = useTema();
   const { estado, recargar } = useCatalogo();
@@ -35,7 +34,6 @@ export default function PantallaEspacios() {
   const masCercano = useMemo(() => {
     if (!coords || !datos) return null;
     let mejor: { nombre: string; km: number } | null = null;
-    // Por lugar físico: los espacios sueltos («—») cuentan cada uno por su lado.
     for (const e of datos.espacios) {
       const km = distanciaKm(coords, e.coordenadas);
       if (!mejor || km < mejor.km) mejor = { nombre: lugarDe(e), km };

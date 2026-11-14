@@ -7,8 +7,6 @@ import {
 import { huellaContrasena } from '../logica/sha256';
 import { solicitar } from './cliente';
 
-/** Cuenta y sesión. El token va a SecureStore; los datos del usuario, a kv-store. */
-
 export async function iniciarSesion(email: string, contrasena: string): Promise<Resultado<Sesion>> {
   const res = await solicitar<Sesion>('POST', '/auth/ingreso', { cuerpo: { email: email.trim(), contrasena }, sinSesion: true });
   if (res.ok) {
@@ -32,27 +30,18 @@ async function persistirSesion(s: Sesion) {
   await guardarJson(CLAVES.usuarioSesion, s.usuario);
 }
 
-/** La API no tiene "cerrar sesión": alcanza con olvidar el token en el teléfono. */
 export async function cerrarSesion(): Promise<void> {
   await borrarToken();
   await borrarCredencialLocal();
   await borrarClave(CLAVES.usuarioSesion);
 }
 
-/**
- * Sesión guardada leída solo del teléfono (sin red): permite pedir la huella apenas abre la app,
- * sin mostrar nada mientras se consulta la API.
- */
 export async function sesionGuardada(): Promise<Usuario | null> {
   const token = await leerToken();
   if (!token) return null;
   return leerJson<Usuario>(CLAVES.usuarioSesion);
 }
 
-/**
- * Sesión guardada: el token sigue en SecureStore aunque se cierre la app. Si no hay red,
- * se usa el último usuario conocido para poder mostrar las reservas guardadas.
- */
 export async function restaurarSesion(): Promise<Usuario | null> {
   const token = await leerToken();
   if (!token) return null;
@@ -80,21 +69,12 @@ export async function actualizarDatos(cambios: { nombre?: string; telefono?: str
   return res;
 }
 
-/**
- * Alternativa a la huella para quien no la tiene: se confirma la contraseña volviendo a
- * ingresar. Si es correcta, la API entrega un token nuevo y se guarda.
- */
-/** Guarda en el teléfono la huella (no la contraseña) para el reingreso sin red. */
 async function recordarContrasena(email: string, contrasena: string): Promise<void> {
   const sal = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 12)}`;
   await guardarCredencialLocal({ email: email.trim().toLowerCase(), sal, huella: huellaContrasena(contrasena, sal) });
 }
 
-/**
- * Confirma la contraseña en el reingreso. Con red la valida la API; sin red (o si la API no
- * responde) se compara con la huella guardada al ingresar, para que el jugador pueda abrir la
- * app y mostrar su QR aunque no tenga señal.
- */
+// Sin red se compara con la huella guardada al ingresar.
 export async function verificarContrasena(email: string, contrasena: string): Promise<Resultado<{ sinRed: boolean }>> {
   const res = await iniciarSesion(email, contrasena);
   if (res.ok) return { ok: true, datos: { sinRed: false }, meta: null, desdeCache: false };
@@ -109,7 +89,6 @@ export async function verificarContrasena(email: string, contrasena: string): Pr
   return { ok: true, datos: { sinRed: true }, meta: null, desdeCache: true };
 }
 
-/** Datos de otra persona (para el personal: nombre y teléfono de quien reservó). */
 export async function obtenerUsuario(id: string): Promise<Resultado<Usuario>> {
   const res = await solicitar<Usuario>('GET', `/usuarios/${encodeURIComponent(id)}`);
   if (res.ok) {

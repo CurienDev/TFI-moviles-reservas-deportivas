@@ -1,7 +1,4 @@
-// Prueba de humo contra la API de la cátedra: recorre los endpoints que usa la app con los
-// usuarios de demo y dice OK o FALLA en cada paso. No modifica nada salvo una reserva de
-// prueba de nuevo@demo.ar, que crea y cancela.
-//
+// Prueba rápida de los endpoints que usa la app (crea y cancela una reserva de nuevo@demo.ar).
 // Uso:  node scripts/probar-api.mjs http://localhost:3000   (API corriendo en esta PC)
 
 const base = (process.argv[2] ?? 'http://localhost:3000').replace(/\/+$/, '');

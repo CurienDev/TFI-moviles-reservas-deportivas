@@ -8,14 +8,8 @@ import { conRespaldo, solicitar } from './cliente';
 import { query } from './protocolo';
 import { obtenerUsuario } from './usuarios';
 
-/**
- * Servicio de reservas (PDR: src/servicios/reservas.ts). Toda lectura y escritura de
- * turnos, reservas, fijas y bloqueos pasa por acá, contra la API de la cátedra.
- */
-
 const POR_PAGINA = 100;
 
-/** Combina una reserva con su espacio y su horario (sale del id del turno). */
 export function detallar(reserva: Reserva, espacios: Espacio[]): ReservaDetallada {
   const t = parseIdTurno(reserva.turnoId);
   return {
@@ -31,13 +25,11 @@ async function espaciosGuardados(): Promise<Espacio[]> {
   return db.listar<Espacio>('espacios');
 }
 
-// ---- Disponibilidad (pública) ----
-
 export function obtenerTurnos(espacioId: string, fecha: string): Promise<Resultado<Turno[]>> {
   return solicitar<Turno[]>('GET', `/espacios/${encodeURIComponent(espacioId)}/turnos${query({ fecha })}`);
 }
 
-// ---- Jugador ----
+// Jugador
 
 export function reservar(turnoId: string, cantidadPersonas: number): Promise<Resultado<Reserva>> {
   return solicitar<Reserva>('POST', '/reservas', { cuerpo: { turnoId, cantidadPersonas } });
@@ -53,10 +45,6 @@ async function pedirMisReservas(): Promise<Resultado<Reserva[]>> {
   return { ok: true, datos: [...proximas.datos, ...pasadas.datos], meta: null, desdeCache: false };
 }
 
-/**
- * Mis reservas (próximas y pasadas). Quedan guardadas en SQLite para mostrarlas, con su
- * QR, aunque en la puerta de la cancha no haya señal.
- */
 export async function misReservas(usuarioId: string): Promise<Resultado<ReservaDetallada[]>> {
   const res = await conRespaldo(
     pedirMisReservas,
@@ -68,7 +56,6 @@ export async function misReservas(usuarioId: string): Promise<Resultado<ReservaD
   return { ...res, datos: res.datos.map((r) => detallar(r, espacios)) };
 }
 
-/** Reservas guardadas en el teléfono (sin pedir nada a la red). */
 export function misReservasGuardadas(usuarioId: string): Promise<Reserva[]> {
   return db.listar<Reserva>('reservas', usuarioId);
 }
@@ -85,10 +72,6 @@ export async function obtenerReserva(id: string, usuarioId: string | null): Prom
   return { ...res, datos: detallar(res.datos, await espaciosGuardados()) };
 }
 
-/**
- * Cancela una reserva. Si la cancela su dueño desde este teléfono se anota, para no
- * confundirla después con una suspensión de la Dirección.
- */
 export async function cancelarReserva(id: string, usuarioId: string | null): Promise<Resultado<Reserva>> {
   const res = await solicitar<Reserva>('POST', `/reservas/${encodeURIComponent(id)}/cancelacion`, { cuerpo: {} });
   if (res.ok && usuarioId && res.datos.usuarioId === usuarioId) {
@@ -100,7 +83,7 @@ export async function cancelarReserva(id: string, usuarioId: string | null): Pro
   return res;
 }
 
-// ---- Encargado y administrador ----
+// Encargado y administrador
 
 export function registrarIngreso(codigoQr: string, espacioId: string): Promise<Resultado<Reserva>> {
   return solicitar<Reserva>('POST', '/ingresos', { cuerpo: { codigoQr: codigoQr.trim().toUpperCase(), espacioId } });
@@ -110,10 +93,6 @@ export function marcarAusente(reservaId: string): Promise<Resultado<Reserva>> {
   return solicitar<Reserva>('POST', `/reservas/${encodeURIComponent(reservaId)}/ausente`, { cuerpo: {} });
 }
 
-/**
- * Agenda del día: la API da los turnos de todos los espacios; para saber quién tiene cada
- * uno se cruzan con las reservas del día, las fijas (titular) y los datos de cada persona.
- */
 export async function agendaDelDia(fecha: string): Promise<Resultado<FilaAgenda[]>> {
   const [turnos, reservas, fijas] = await Promise.all([
     solicitar<Turno[]>('GET', `/agenda${query({ fecha, porPagina: 500 })}`),
@@ -134,7 +113,6 @@ export async function agendaDelDia(fecha: string): Promise<Resultado<FilaAgenda[
   const filas: FilaAgenda[] = turnos.datos
     .filter((t) => t.estado !== 'libre')
     .map((turno) => {
-      // Una reserva ocupa el turno salvo que esté cancelada (las ausentes y cumplidas, también).
       const reserva = reservas.datos.find((r) => r.turnoId === turno.id && r.estado !== 'cancelada') ?? null;
       const fija = turno.estado === 'fijo' ? fijaQueCubre(turno, listaFijas) : null;
       return {
@@ -149,7 +127,6 @@ export async function agendaDelDia(fecha: string): Promise<Resultado<FilaAgenda[
   return { ok: true, datos: filas, meta: null, desdeCache: false };
 }
 
-/** Reservas de los próximos días (para la lista de usuarios con cancelaciones y ausencias). */
 export function reservasDelDia(fecha: string): Promise<Resultado<Reserva[]>> {
   return solicitar<Reserva[]>('GET', `/reservas${query({ fecha, porPagina: POR_PAGINA })}`);
 }
@@ -173,7 +150,6 @@ export function listarFijas(): Promise<Resultado<ReservaFija[]>> {
   return solicitar<ReservaFija[]>('GET', `/fijas${query({ porPagina: POR_PAGINA })}`);
 }
 
-/** Sólo administrador. La API rechaza superposiciones y conflictos con reservas (409). */
 export function crearFija(fija: Omit<ReservaFija, 'id' | 'activa'>): Promise<Resultado<ReservaFija>> {
   return solicitar<ReservaFija>('POST', '/fijas', { cuerpo: fija });
 }
@@ -182,7 +158,6 @@ export function editarFija(id: string, cambios: Partial<Omit<ReservaFija, 'id'>>
   return solicitar<ReservaFija>('PATCH', `/fijas/${encodeURIComponent(id)}`, { cuerpo: cambios });
 }
 
-/** Da de baja la fija (la API la deja con activa: false). */
 export function darDeBajaFija(id: string): Promise<Resultado<void>> {
   return solicitar<void>('DELETE', `/fijas/${encodeURIComponent(id)}`);
 }

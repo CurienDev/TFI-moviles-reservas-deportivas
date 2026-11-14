@@ -37,7 +37,6 @@ export default function PantallaRegistro() {
       setError(r.error.mensaje);
       return;
     }
-    // replace: con "atrás" no se vuelve al formulario de registro.
     if (router.canGoBack()) router.back();
     else router.replace('/');
   };

@@ -16,7 +16,6 @@ const ICONOS: Record<TipoAviso, string> = {
   turno_liberado: 'star-outline',
 };
 
-/** Bandeja de avisos: se guardan en el teléfono (SQLite) al sincronizar con la API. */
 function Contenido() {
   const { colores } = useTema();
   const { usuario, avisos, sincronizar, recargarAvisos } = useSesion();

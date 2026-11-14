@@ -7,7 +7,6 @@ import { useTema } from '../contexto/TemaContext';
 import { validarEmail } from '../logica/reglas';
 import { espaciado } from '../tema/colores';
 
-/** Usuarios de demo de la API de la cátedra (todos con la contraseña villaguay2026). */
 const CONTRASENA_DEMO = 'villaguay2026';
 const CUENTAS_DEMO = [
   { rol: 'Jugador', email: 'emiliano@mail.com', icono: 'football-outline' },
@@ -40,7 +39,6 @@ export default function PantallaLogin() {
       setError(r.error.mensaje);
       return;
     }
-    // Se vuelve a la pantalla anterior: "atrás" no debe regresar al formulario.
     if (router.canGoBack()) router.back();
     else router.replace('/');
   };

@@ -15,14 +15,6 @@ import type { Reserva } from '../../tipos';
 import { espaciado, radio } from '../../tema/colores';
 import { nombreComplejo } from '../../logica/complejos';
 
-/**
- * Escaneo del QR en la puerta. Antes de abrir la cámara el encargado se vuelve a
- * identificar con huella o rostro (o con su contraseña si el teléfono no tiene). La API
- * valida el código (de hoy, de esta cancha, en horario, sin usar) y la app lo muestra
- * claro, con vibración distinta para válido e inválido.
- */
-
-/** Códigos con los que la API rechaza un QR (se muestran como "código inválido"). */
 const RECHAZOS = new Set([
   'CODIGO_INVALIDO', 'RESERVA_CANCELADA', 'RESERVA_AUSENTE', 'CODIGO_DE_OTRO_DIA',
   'CODIGO_DE_OTRO_ESPACIO', 'INGRESO_YA_REGISTRADO', 'FUERA_DE_HORARIO',
@@ -42,7 +34,7 @@ function Escaner() {
   const [errorRed, setErrorRed] = useState<string | null>(null);
   const [procesando, setProcesando] = useState(false);
   const [manual, setManual] = useState('');
-  // onBarcodeScanned se dispara en cada cuadro: la bandera evita procesar el mismo código varias veces.
+  // Evita procesar el mismo código varias veces.
   const bloqueado = useRef(false);
 
   const validar = async (codigo: string) => {
@@ -61,12 +53,10 @@ function Escaner() {
     setProcesando(false);
     if (RECHAZOS.has(r.error.codigo)) {
       setResultado({ valido: false, mensaje: r.error.mensaje });
-      // Patrón largo y distinto para que se note sin mirar la pantalla.
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Vibration.vibrate([0, 400, 150, 400]);
       return;
     }
-    // Falla de red o del servidor: no es un problema del código, se puede reintentar.
     setErrorRed(r.error.mensaje);
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
   };

@@ -1,9 +1,3 @@
-/**
- * SHA-256 en JavaScript puro (FIPS 180-4), sin módulos nativos. Se usa solo para guardar una
- * huella de la contraseña en el teléfono y poder confirmar la identidad sin red (ver
- * servicios/usuarios.ts). La contraseña nunca se guarda en claro.
- */
-
 const K = new Uint32Array([
   0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
   0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -67,15 +61,11 @@ function sha256Bytes(datos: Uint8Array): Uint8Array {
 
 const hex = (b: Uint8Array) => Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
 
-/** SHA-256 de un texto (UTF-8), en hexadecimal. */
 export function sha256(texto: string): string {
   return hex(sha256Bytes(utf8(texto)));
 }
 
-/**
- * Huella de contraseña: SHA-256 iterado con sal, para que adivinarla por fuerza bruta sea lento.
- * No reemplaza a la API: solo sirve para el reingreso sin conexión en este mismo teléfono.
- */
+// Huella de la contraseña para el reingreso sin red (nunca se guarda en claro).
 export function huellaContrasena(contrasena: string, sal: string, vueltas = 2000): string {
   let actual = sha256Bytes(utf8(`${sal}:${contrasena}`));
   const sb = utf8(sal);

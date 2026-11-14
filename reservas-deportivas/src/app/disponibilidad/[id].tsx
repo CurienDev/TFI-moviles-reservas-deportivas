@@ -17,11 +17,6 @@ import type { Deporte, ReservaFija, Turno } from '../../tipos';
 import { espaciado, radio } from '../../tema/colores';
 import { useCarga } from '../../utilidades/useCarga';
 
-/**
- * Grilla de turnos de un espacio para un día (la pantalla más importante del PRD).
- * La arma la API cruzando reservas, fijas y bloqueos. Reservar son dos toques: tocar un
- * turno libre y confirmar. Los turnos que ya pasaron no se pueden reservar (lo decide la app).
- */
 export default function PantallaDisponibilidad() {
   const { id, fecha: fechaParam } = useLocalSearchParams<{ id: string; fecha?: string }>();
   const espacioId = String(id);
@@ -40,13 +35,11 @@ export default function PantallaDisponibilidad() {
 
   const { estado, recargar, refrescando, reintentar } = useCarga(() => obtenerTurnos(espacioId, fecha), [espacioId, fecha]);
 
-  // Se refresca "ahora" cada minuto para que un turno que pasa deje de ser reservable.
   useEffect(() => {
     const t = setInterval(() => setAhora(new Date()), 60_000);
     return () => clearInterval(t);
   }, []);
 
-  // Ids de mis reservas (guardadas en el teléfono), para marcar "Tu reserva" en la grilla.
   useEffect(() => {
     if (!usuario) return;
     let vigente = true;
@@ -58,7 +51,7 @@ export default function PantallaDisponibilidad() {
     };
   }, [usuario, estado]);
 
-  // El personal ve el titular de cada reserva fija (la API no lo manda en el turno).
+  // La API no manda el titular de la fija en el turno.
   useEffect(() => {
     if (!esStaff) return;
     let vigente = true;

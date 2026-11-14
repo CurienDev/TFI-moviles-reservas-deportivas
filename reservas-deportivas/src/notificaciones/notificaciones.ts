@@ -6,13 +6,6 @@ import { rangoHorario, fechaRelativa } from '../logica/fechas';
 import { esReservaActiva, momentoRecordatorio } from '../logica/reglas';
 import { complejoDe } from '../logica/complejos';
 
-/**
- * Notificaciones LOCALES (las programa el propio teléfono, sin servidor ni internet):
- *  - recordatorio dos horas antes de cada turno confirmado;
- *  - avisos (turno suspendido, turno liberado de un favorito) que la app detecta al
- *    sincronizar con la API (ver src/servicios/avisos.ts).
- */
-
 const CANAL_RECORDATORIOS = 'recordatorios';
 const CANAL_AVISOS = 'avisos';
 
@@ -58,11 +51,6 @@ async function permisoConcedido(): Promise<boolean> {
   }
 }
 
-/**
- * Reprograma los recordatorios a partir de las reservas actuales del usuario.
- * Se llama cada vez que cambian (reservar, cancelar, suspensión de la Dirección),
- * así un turno cancelado nunca deja un recordatorio viejo.
- */
 export async function sincronizarRecordatorios(reservas: ReservaDetallada[]): Promise<void> {
   try {
     const programadas = await Notifications.getAllScheduledNotificationsAsync();
@@ -87,7 +75,7 @@ export async function sincronizarRecordatorios(reservas: ReservaDetallada[]): Pr
       });
     }
   } catch {
-    // Las notificaciones son una ayuda: si el sistema las rechaza, la app sigue.
+    // Si el sistema las rechaza, la app sigue igual.
   }
 }
 
@@ -95,7 +83,6 @@ export async function cancelarTodosLosRecordatorios(): Promise<void> {
   await sincronizarRecordatorios([]);
 }
 
-/** Muestra como notificación los avisos que todavía no se mostraron en este teléfono. */
 export async function entregarAvisos(usuarioId: string, avisos: Aviso[]): Promise<void> {
   const clave = CLAVES.avisosEntregados(usuarioId);
   const entregados = new Set((await leerJson<string[]>(clave)) ?? []);

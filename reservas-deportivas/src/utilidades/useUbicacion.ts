@@ -2,11 +2,6 @@ import * as Location from 'expo-location';
 import { useCallback, useEffect, useState } from 'react';
 import type { Coordenadas } from '../tipos';
 
-/**
- * Ubicación en primer plano, opcional. Si la persona la niega la app funciona igual:
- * solo se usa para el mapa y para saber qué complejo queda más cerca (PDR).
- * Nunca se pide ubicación en segundo plano.
- */
 export type EstadoUbicacion =
   | { tipo: 'sin_pedir' }
   | { tipo: 'buscando' }
@@ -35,7 +30,6 @@ export function useUbicacion(pedirAlMontar = false) {
   const [estado, setEstado] = useState<EstadoUbicacion>({ tipo: 'sin_pedir' });
 
   useEffect(() => {
-    // Al montar solo se consulta si ya había permiso; se pide únicamente si se indicó.
     let vigente = true;
     void consultarUbicacion(pedirAlMontar).then((e) => {
       if (vigente) setEstado(e);

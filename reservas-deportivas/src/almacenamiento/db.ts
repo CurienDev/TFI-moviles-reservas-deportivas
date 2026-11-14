@@ -1,12 +1,5 @@
 import * as SQLite from 'expo-sqlite';
 
-/**
- * Datos guardados en el teléfono con expo-sqlite, para que la app abra y muestre algo
- * sin conexión: catálogo de espacios, mis reservas (con su QR), avisos, fotos de canchas
- * y la última grilla vista de los espacios favoritos. Cada entidad se guarda como un
- * documento JSON dentro de una colección.
- */
-
 export type Coleccion =
   | 'deportes'
   | 'espacios'
@@ -39,7 +32,6 @@ export function abrirDb(): Promise<SQLite.SQLiteDatabase> {
   return dbPromesa;
 }
 
-/** Lista una colección. `dueno` separa los datos de cada usuario (p. ej. mis reservas). */
 export async function listar<T>(coleccion: Coleccion, dueno = ''): Promise<T[]> {
   const db = await abrirDb();
   const filas = await db.getAllAsync<{ datos: string }>(
@@ -71,7 +63,6 @@ export async function guardar<T extends { id: string }>(coleccion: Coleccion, do
   );
 }
 
-/** Reemplaza todo el contenido de una colección (de un dueño) en una transacción. */
 export async function reemplazarColeccion<T extends { id: string }>(coleccion: Coleccion, docs: T[], dueno = ''): Promise<void> {
   const db = await abrirDb();
   await db.withExclusiveTransactionAsync(async (tx) => {

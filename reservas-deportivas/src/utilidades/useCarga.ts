@@ -2,12 +2,6 @@ import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { EstadoCarga, Resultado } from '../tipos';
 
-/**
- * Carga datos de un servicio al enfocar la pantalla y expone el estado como unión
- * discriminada (cargando / éxito / error). `recargar` sirve para pull-to-refresh.
- * La función se guarda en un ref (actualizado en un efecto) para no disparar un
- * bucle de efectos; los parámetros se comparan por su representación JSON.
- */
 export function useCarga<T>(cargar: () => Promise<Resultado<T>>, deps: unknown[] = []) {
   const [estado, setEstado] = useState<EstadoCarga<T>>({ tipo: 'cargando' });
   const [refrescando, setRefrescando] = useState(false);
@@ -22,8 +16,7 @@ export function useCarga<T>(cargar: () => Promise<Resultado<T>>, deps: unknown[]
 
   const ejecutar = useCallback(async (silencioso: boolean, claveActual: string) => {
     const id = ++vigente.current;
-    // Al volver a la pantalla se conservan los datos mientras se actualizan;
-    // si cambiaron los parámetros (otro día, otro espacio) se muestra la carga.
+    // Si cambiaron los parámetros se vuelve a mostrar la carga.
     const cambiaron = clavePrevia.current !== null && clavePrevia.current !== claveActual;
     clavePrevia.current = claveActual;
     if (!silencioso) setEstado((e) => (e.tipo === 'exito' && !cambiaron ? e : { tipo: 'cargando' }));

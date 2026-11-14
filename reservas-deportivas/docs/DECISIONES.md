@@ -70,4 +70,4 @@ con la API esté encendida y en la misma red (o conectada por cable); sin eso fu
 conexión con lo guardado. Si más adelante se quisiera publicar la API, el README de la API explica
 cómo (sección 11) y alcanza con poner la dirección en Perfil › Servidor o en `eas.json`.
 
-Probado el 9/11/2026 en el emulador (Pixel, Android 15) contra la API local. Instalación y lista de pruebas: ver la carpeta [`guias/`](../guias/).
+Probado el 9/11/2026 en el emulador (Pixel, Android 15) contra la API local. Instalación: ver el README.

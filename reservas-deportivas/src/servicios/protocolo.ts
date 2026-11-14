@@ -1,12 +1,5 @@
 import type { ErrorApi, Meta, Resultado } from '../tipos';
 
-/**
- * Interpretación de las respuestas de la API (función pura, sin red, con pruebas).
- * - Éxito: { datos, meta } (meta es null para un solo recurso).
- * - Error: { error: { codigo, mensaje } }.
- * - DELETE correcto: 204 sin cuerpo.
- */
-
 export const ERROR_RED: ErrorApi = {
   codigo: 'ERROR_RED',
   mensaje: 'No hay conexión con el servidor. Revisá tus datos o el Wi-Fi e intentá de nuevo.',
@@ -36,14 +29,12 @@ export function interpretarRespuesta<T>(status: number, cuerpo: unknown): Result
   return { ok: false, error: { codigo: 'RESPUESTA_INVALIDA', mensaje: 'El servidor respondió algo inesperado. ¿La dirección es la de la API?' } };
 }
 
-/** Normaliza la dirección que escribe la persona: sin espacios ni barra final, con protocolo. */
 export function normalizarUrl(url: string): string {
   let u = url.trim().replace(/\/+$/, '');
   if (u && !/^https?:\/\//i.test(u)) u = `http://${u}`;
   return u;
 }
 
-/** Arma "?a=1&b=2" omitiendo los valores vacíos. */
 export function query(params: Record<string, string | number | boolean | null | undefined>): string {
   const partes = Object.entries(params)
     .filter(([, v]) => v !== undefined && v !== null && v !== '')

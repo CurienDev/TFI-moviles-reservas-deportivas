@@ -1,12 +1,7 @@
 import type { ReservaFija, Turno } from '../tipos';
 import { HORA_APERTURA, HORA_CIERRE, diaSemana, horaAString } from './fechas';
 
-/**
- * Ids de turno. La grilla la arma la API (cruza reservas, fijas y bloqueos); la app solo
- * necesita armar y desarmar el id, que es determinístico (decisión D1 de la API):
- * tur-<espacioId>-<AAAAMMDD>-<HH>, por ejemplo "tur-esp-02-20260919-19".
- */
-
+// Formato: tur-<espacioId>-<AAAAMMDD>-<HH>
 export function idTurno(espacioId: string, fecha: string, inicio: string): string {
   return `tur-${espacioId}-${fecha.replace(/-/g, '')}-${inicio.slice(0, 2)}`;
 }
@@ -24,11 +19,6 @@ export function parseIdTurno(id: string): { espacioId: string; fecha: string; in
   };
 }
 
-/**
- * La reserva fija que cubre un turno "fijo" (misma regla R3 de la API: activa, mismo día
- * de la semana, dentro de la vigencia y del horario). La API no manda el titular en el
- * Turno; el personal lo obtiene cruzando con GET /fijas.
- */
 export function fijaQueCubre(turno: Pick<Turno, 'espacioId' | 'fecha' | 'inicio'>, fijas: ReservaFija[]): ReservaFija | null {
   return (
     fijas.find(

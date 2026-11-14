@@ -1,9 +1,3 @@
-/**
- * Paletas clara y oscura. El modo oscuro usa fondos casi negros y texto de alto
- * contraste para leer de noche y a la intemperie (PDR). Los estados del turno
- * nunca se comunican solo con color: siempre van con texto e ícono.
- */
-
 export interface Paleta {
   oscuro: boolean;
   fondo: string;

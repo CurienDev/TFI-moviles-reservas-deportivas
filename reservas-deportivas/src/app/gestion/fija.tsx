@@ -21,7 +21,6 @@ const MENSAJES_CONFLICTO: Record<string, string> = {
     'Hay reservas confirmadas de jugadores en ese horario. Resolvelas primero (cancelalas desde la Agenda del día avisando a cada persona) y volvé a cargar la fija.',
 };
 
-/** Alta y edición de una reserva fija (solo administrador). */
 function Contenido() {
   const { id } = useLocalSearchParams<{ id?: string }>();
   const { colores } = useTema();

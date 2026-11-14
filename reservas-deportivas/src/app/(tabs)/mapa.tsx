@@ -12,11 +12,6 @@ import { espaciado, radio } from '../../tema/colores';
 import { abrirComoLlegar } from '../../utilidades/navegacion';
 import { useUbicacion } from '../../utilidades/useUbicacion';
 
-/**
- * Mapa de complejos con MapLibre + teselas de OpenStreetMap: gratuito, de código
- * abierto y sin clave de API (react-native-maps exige Google Maps en Android).
- */
-
 const CENTRO_VILLAGUAY: [number, number] = [-59.0262, -31.8635];
 
 function estiloMapa(oscuro: boolean): StyleSpecification {
@@ -37,7 +32,6 @@ function estiloMapa(oscuro: boolean): StyleSpecification {
         id: 'osm',
         type: 'raster',
         source: 'osm',
-        // En modo oscuro se atenúa el mapa para no encandilar de noche.
         paint: oscuro ? { 'raster-brightness-max': 0.55, 'raster-saturation': -0.4, 'raster-contrast': 0.1 } : {},
       },
     ],
@@ -50,6 +44,7 @@ interface Complejo {
   espacios: Espacio[];
 }
 
+// MapLibre + OpenStreetMap: no necesita clave de Google.
 export default function PantallaMapa() {
   const { colores } = useTema();
   const { estado, recargar, deporte } = useCatalogo();

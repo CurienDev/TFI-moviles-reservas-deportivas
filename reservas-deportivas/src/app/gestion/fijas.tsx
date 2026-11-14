@@ -12,7 +12,6 @@ import { listarFijas } from '../../servicios/reservas';
 import { espaciado } from '../../tema/colores';
 import { useCarga } from '../../utilidades/useCarga';
 
-/** Reservas fijas: reglas que ocupan el mismo turno todas las semanas. */
 function Contenido() {
   const { colores } = useTema();
   const insets = useSafeAreaInsets();
@@ -84,7 +83,6 @@ const estilos = StyleSheet.create({
   barra: { position: 'absolute', left: 0, right: 0, bottom: 0, padding: espaciado.m, borderTopWidth: StyleSheet.hairlineWidth },
 });
 
-/** lunes → lunes, sábado → sábados, domingo → domingos. */
 function plural(dia: string): string {
   return dia.endsWith('s') ? dia : `${dia}s`;
 }

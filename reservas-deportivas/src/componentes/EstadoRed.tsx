@@ -5,16 +5,11 @@ import { useTema } from '../contexto/TemaContext';
 import { espaciado } from '../tema/colores';
 import { Icono, Texto } from './base';
 
-/** true si el teléfono tiene red (expo-network). Mientras no se sabe, se asume que sí. */
 export function useHayRed(): boolean {
   const red = useNetworkState();
   return red.isConnected !== false && red.isInternetReachable !== false;
 }
 
-/**
- * Franja fija arriba de todo que avisa cuando el teléfono se queda sin conexión
- * (requisito del TFI: avisar el estado de la red con expo-network).
- */
 export function BannerSinRed() {
   const hayRed = useHayRed();
   const { colores } = useTema();
